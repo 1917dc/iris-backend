@@ -47,6 +47,7 @@ public class TokenController {
                 .stream()   // desestruturação de roles *separadas por espaço*
                 .map(Role::getName)
                 .collect(Collectors.joining(" "));
+
         var claims = JwtClaimsSet.builder()
                 .issuer("iris")
                 .subject(user.get().getUserId().toString())

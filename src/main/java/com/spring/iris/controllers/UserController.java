@@ -9,6 +9,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,10 +21,10 @@ import java.util.Set;
 public class UserController {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final BCryptPasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
 
-    public UserController(UserRepository userRepository, PasswordEncoder passwordEncoder, RoleRepository roleRepository) {
+    public UserController(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder, RoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.roleRepository = roleRepository;
@@ -31,9 +32,10 @@ public class UserController {
 
     @Transactional  // semântica que especifica que é uma operação transacional no bd
     @PostMapping("/users")
-    public ResponseEntity<Void> createUser(@RequestBody RegisterRequestDTO register) {
+    //@PreAuthorize("hasAuthority('SCOPE_COORDENADOR')")
+    public ResponseEntity<Void> register(@RequestBody RegisterRequestDTO register) {
         Optional<User> user = userRepository.findByCpf(register.cpf());
-        var role = roleRepository.findByName(Role.Values.PROFESSOR.name());
+        var role = roleRepository.findByName(register.role());
         if(user.isPresent()) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }

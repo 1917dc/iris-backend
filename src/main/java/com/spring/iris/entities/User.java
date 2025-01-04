@@ -31,7 +31,7 @@ public class User {
     private Set<Role> roles;
 
     public boolean isLoginCorrect(@RequestBody LoginRequestDTO loginRequest, BCryptPasswordEncoder passwordEncoder) {
-        return passwordEncoder.matches(this.password, loginRequest.password());
+        return passwordEncoder.matches(loginRequest.password(), this.password);
     }
 
     public UUID getUserId() {
